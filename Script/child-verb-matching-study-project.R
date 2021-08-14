@@ -2,13 +2,14 @@
 
 #load the library
 library(childesr)
-library(dplyr)
+
 library(ggplot2)
 library(tidyverse)
 library(tidyboot)
 library(magrittr)
 library(tidytext)
 library(plyr)
+library(dplyr)
 library(ddply)
 library(scales)
 
@@ -51,7 +52,7 @@ length(three_sym_filtered_pos_df$target_child_id) #362
 #now we want to know what words don't appear in the db
 three_sym_not_in_db <- sym_list %>% filter(!form %in% three_sym_filtered_pos_df$form)
 
-write.csv(three_sym_not_in_db, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\three_sym_not_in_db.csv")
+write.csv(three_sym_not_in_db, "~\\GitHub\\child-verb-matching-study\\Output\\three_sym_not_in_db.csv")
 
 length(three_sym_filtered_pos_df$target_child_id) #362
 length(unique(three_sym_filtered_pos_df$target_child_id)) #33
