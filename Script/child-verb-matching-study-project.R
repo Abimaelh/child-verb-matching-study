@@ -160,6 +160,8 @@ length(unique(three_child_all_stems_per_child_no_zeros_sym$target_child_id)) #33
 #eliminating the zeros worked!
 verb_pairs_for_three_child_sheet_sym <- three_child_all_stems_per_child_no_zeros_sym %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = length(unique(target_child_id)))
+write.csv(verb_pairs_for_three_child_sheet_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\verb_pairs_for_three_child_sheet_sym.csv")
+
 length(unique(three_child_all_stems_per_child_no_zeros_sym$target_child_id)) #33
 
 #Extracting corpus information so we can exclude atypical children
@@ -179,14 +181,14 @@ length(exclusion_three_info_sym_final$target_child_id) #362 should be the same w
 sum(three_child_all_stems_per_child_no_zeros_sym$tokens) #362. Yup they match.
 length(unique(exclusion_three_info_sym_final$target_child_id))#33
 
-write.csv(exclusion_three_info_sym_final, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\exclusion_three_info_sym_final.csv")
+write.csv(exclusion_three_info_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\exclusion_three_info_sym_final.csv")
 #check the corpra in this df
 unique(exclusion_three_info_sym_final$corpus_name)
 
 #tokens per corpus
 corpra_tokens_three_sym <- exclusion_three_info_sym_final %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(tokens = length(corpus_name))
-#write.csv(corpra_tokens_three_sym,"C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\tokens-from-each-corpus-three-sym.csv")
+write.csv(corpra_tokens_three_sym,"~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\tokens-from-each-corpus-three-sym.csv")
 #do the verb pair tokens add up to the number of tokens in the corpora?
 #verb pair = 362 and the corpora tokens = 362
 sum(verb_pairs_for_three_child_sheet_sym$tokens)
@@ -195,13 +197,13 @@ sum(corpra_tokens_three_sym$tokens)
 #number of children in each corpus
 num_of_children_in_each_corpus_three_sym <- exclusion_three_info_sym_final %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(num_chi = length(unique(target_child_id)))
-write.csv(num_of_children_in_each_corpus_three_sym, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\num-of-children-in-each-corpus-three-sym.csv")
+write.csv(num_of_children_in_each_corpus_three_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\num-of-children-in-each-corpus-three-sym.csv")
 
 #token frequency per child to check for outliers
 token_freq_per_child_three_sym <- exclusion_three_info_sym_final %>% dplyr::group_by(target_child_id) %>%
   dplyr::summarize(tokens = (length(stem)), corpus_name = (corpus_name))
 token_freq_per_child_three_sym_final <- unique(token_freq_per_child_three_sym)
-write.csv(token_freq_per_child_three_sym_final, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\token-freq-per-child-three-sym-final.csv")
+write.csv(token_freq_per_child_three_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\token-freq-per-child-three-sym-final.csv")
 
 #checking one participant, all good.
 get_participants(
@@ -239,7 +241,7 @@ four_sym_filtered_pos_df <- four_sym_df_trimmed %>% filter(pos == 'v' | pos == '
 length(four_sym_filtered_pos_df$target_child_id) #504
 #now we want to know what words don't appear in the db
 four_sym_not_in_db <- sym_list %>% filter(!form %in% four_sym_filtered_pos_df$form)
-write.csv(four_sym_not_in_db, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\four_sym_not_in_db.csv")
+write.csv(four_sym_not_in_db, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four_sym_not_in_db.csv")
 
 length(four_sym_filtered_pos_df$target_child_id) #504
 length(unique(four_sym_filtered_pos_df$target_child_id)) #55
@@ -365,12 +367,13 @@ four_child_all_stems_per_child_no_zeros_sym <- four_child_all_stems_per_child_sy
 #this is key!
 four_child_all_stems_per_child_no_zeros_sym <- four_child_all_stems_per_child_no_zeros_sym %>% filter(tokens != 0)
 four_child_all_stems_per_child_no_zeros_sym <- four_child_all_stems_per_child_no_zeros_sym %>% arrange(target_child_id)
-write.csv(four_child_all_stems_per_child_no_zeros_sym, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\four_child_all_stems_per_child_no_zeros_sym.csv")
+write.csv(four_child_all_stems_per_child_no_zeros_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four_child_all_stems_per_child_no_zeros_sym.csv")
 length(unique(four_child_all_stems_per_child_no_zeros_sym$target_child_id)) #41 total children represented. 
 sum(four_child_all_stems_per_child_no_zeros_sym$tokens) #288
 #eliminating the zeros worked!
 verb_pairs_for_four_child_sheet_sym <- four_child_all_stems_per_child_no_zeros_sym %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = length(unique(target_child_id)))
+write.csv(verb_pairs_for_four_child_sheet_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\verb_pairs_for_four_child_sheet_sym.csv")
 length(unique(four_child_all_stems_per_child_no_zeros_sym$target_child_id)) #41
 sum(four_child_all_stems_per_child_no_zeros_sym$tokens) #288
 #length(exclusion_four_info_final_sym$target_child_id) #288
@@ -388,7 +391,7 @@ exclusion_four_info_sym_final$target_child_id %in% four_child_all_stems_per_chil
 exclusion_four_info_sym_final <- exclusion_four_info_sym_final %>% arrange(target_child_id)
 exclusion_four_info_sym_final <- exclusion_four_info_sym_final %>% filter(pos == 'v' | pos == 'part')
 length(exclusion_four_info_sym_final$target_child_id) #288
-write.csv(exclusion_four_info_sym_final, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\exclusion_four_info_sym_final.csv")
+write.csv(exclusion_four_info_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four\\exclusion_four_info_sym_final.csv")
 #check the corpra in this df
 unique(exclusion_four_info_sym_final$corpus_name)
 
@@ -402,18 +405,18 @@ length(exclusion_four_info_sym_final$target_child_id) #288
 #tokens per corpus
 corpora_tokens_four_sym <- exclusion_four_info_sym_final %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(tokens = length(corpus_name))
-write.csv(corpora_tokens_four_sym,"C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\tokens-from-each-corpus-four-sym.csv")
+write.csv(corpora_tokens_four_sym,"~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four\\tokens-from-each-corpus-four-sym.csv")
 
 #number of children in each corpus
 num_of_children_in_each_corpus_four_sym <- exclusion_four_info_sym_final %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(num_chi = length(unique(target_child_id)))
-write.csv(num_of_children_in_each_corpus_four_sym, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\num-of-children-in-each-corpus-four-sym.csv")
+write.csv(num_of_children_in_each_corpus_four_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four\\num-of-children-in-each-corpus-four-sym.csv")
 
 #token frequency per child to check for outliers
 token_freq_per_child_four_sym <- exclusion_four_info_sym_final %>% dplyr::group_by(target_child_id) %>%
   dplyr::summarize(tokens = (length(stem)), corpus_name = (corpus_name))
 token_freq_per_child_four_sym_final <- unique(token_freq_per_child_four_sym)
-write.csv(token_freq_per_child_four_sym_final, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\token-freq-per-child-four-sym-final.csv")
+write.csv(token_freq_per_child_four_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four\\token-freq-per-child-four-sym-final.csv")
 
 #verb_pair numbers using exclusion info
 
@@ -426,27 +429,28 @@ sum(combined_three_four_verb_pair_tokens_sym$tokens) #650
 
 combined_three_four_verb_pair_tokens_summed_sym <- combined_three_four_verb_pair_tokens_sym %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = sum(num_chi))
-write.csv(combined_three_four_verb_pair_tokens_summed_sym, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\combined-three-four-verb-pair-tokens-summed-sym.csv")
+write.csv(combined_three_four_verb_pair_tokens_summed_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\combined\\combined-three-four-verb-pair-tokens-summed-sym.csv")
 sum(combined_three_four_verb_pair_tokens_summed_sym$tokens) #650
 
 sum(four_child_all_stems_per_child_no_zeros_sym$tokens) #288
 length(exclusion_four_info_sym_final$target_child_id) #288
 
 #combined tokens per copra
-combined_corpra_tokens_sym <- rbind(corpra_tokens_three_sym, corpra_tokens_four_sym)
+combined_corpra_tokens_sym <- rbind(corpra_tokens_three_sym, corpora_tokens_four_sym)
 combined_corpra_tokens_sym_final <- combined_corpra_tokens_sym %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(tokens = sum(tokens))
-write.csv(combined_corpra_tokens_sym_final, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\combined-corpra-tokens-sym-final.csv")
+write.csv(combined_corpra_tokens_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\combined\\combined-corpra-tokens-sym-final.csv")
 
 #combined number of children in each corpus
 combined_num_of_children_in_each_corpus_sym <- rbind(num_of_children_in_each_corpus_three_sym,num_of_children_in_each_corpus_four_sym)
 combined_num_of_children_in_each_corpus_sym_final <- combined_num_of_children_in_each_corpus_sym %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(num_chi = sum(num_chi))
-write.csv(combined_num_of_children_in_each_corpus_sym_final, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\combined-num-of-children-in-each-corpus-sym-final.csv")
+write.csv(combined_num_of_children_in_each_corpus_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\combined\\combined-num-of-children-in-each-corpus-sym-final.csv")
 sum(combined_num_of_children_in_each_corpus_sym_final$num_chi) #74
 
 #combined sym exclusion info
 combined_exclusion_syms <- rbind(exclusion_three_info_sym_final, exclusion_four_info_sym_final)
+write.csv(combined_num_of_children_in_each_corpus_sym_final, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\combined\\combined_num_of_children_in_each_corpus_sym_final.csv")
 length(combined_exclusion_syms$target_child_id) #650
 
 ## ** ** ** Child production of foils 3 year olds ** ** ** ##
