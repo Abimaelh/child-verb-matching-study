@@ -12,13 +12,12 @@ library(plyr)
 library(dplyr)
 library(ddply)
 library(scales)
-library(tidyr)
 
 #setwd("C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children")
 getwd()
 
 #importing the symmetricals table
-sym_list <- read.csv(file=file.path("/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Data","sym_list3.csv"), header =TRUE)
+sym_list <- read.csv(file = "~\\GitHub\\child-verb-matching-study\\Data\\sym_list3.csv", header = TRUE)
 sym_list$unique_stems <- NULL
 
 #how many unique sym stems do we have?
