@@ -52,7 +52,7 @@ length(three_sym_filtered_pos_df$target_child_id) #362
 #now we want to know what words don't appear in the db
 three_sym_not_in_db <- sym_list %>% filter(!form %in% three_sym_filtered_pos_df$form)
 
-write.csv(three_sym_not_in_db, "~\\GitHub\\child-verb-matching-study\\Output\\three_sym_not_in_db.csv")
+write.csv(three_sym_not_in_db, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\three\\three_sym_not_in_db.csv")
 
 length(three_sym_filtered_pos_df$target_child_id) #362
 length(unique(three_sym_filtered_pos_df$target_child_id)) #33
@@ -344,7 +344,7 @@ length(four_full_sym$form) #3805
 #now go in and change nas for age to 4 and nas for count to 0
 
 four_full_sym$count[is.na(four_full_sym$count)] <- 0
-four_full$target_child_age[is.na(four_full_sym$target_child_age)] <- 4
+four_full_sym$target_child_age[is.na(four_full_sym$target_child_age)] <- 4
 sum(four_full_sym$count) #291. Matches four_year_olds_tokendf?, ** 
 #taking out think here
 four_sym_filtered_pos_df <- four_sym_filtered_pos_df %>% filter(stem != 'think')
@@ -367,13 +367,13 @@ four_child_all_stems_per_child_no_zeros_sym <- four_child_all_stems_per_child_sy
 #this is key!
 four_child_all_stems_per_child_no_zeros_sym <- four_child_all_stems_per_child_no_zeros_sym %>% filter(tokens != 0)
 four_child_all_stems_per_child_no_zeros_sym <- four_child_all_stems_per_child_no_zeros_sym %>% arrange(target_child_id)
-write.csv(four_child_all_stems_per_child_no_zeros_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four_child_all_stems_per_child_no_zeros_sym.csv")
+write.csv(four_child_all_stems_per_child_no_zeros_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four\\four_child_all_stems_per_child_no_zeros_sym.csv")
 length(unique(four_child_all_stems_per_child_no_zeros_sym$target_child_id)) #41 total children represented. 
 sum(four_child_all_stems_per_child_no_zeros_sym$tokens) #288
 #eliminating the zeros worked!
 verb_pairs_for_four_child_sheet_sym <- four_child_all_stems_per_child_no_zeros_sym %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = length(unique(target_child_id)))
-write.csv(verb_pairs_for_four_child_sheet_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\verb_pairs_for_four_child_sheet_sym.csv")
+write.csv(verb_pairs_for_four_child_sheet_sym, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\four\\verb_pairs_for_four_child_sheet_sym.csv")
 length(unique(four_child_all_stems_per_child_no_zeros_sym$target_child_id)) #41
 sum(four_child_all_stems_per_child_no_zeros_sym$tokens) #288
 #length(exclusion_four_info_final_sym$target_child_id) #288
@@ -455,20 +455,6 @@ length(combined_exclusion_syms$target_child_id) #650
 
 ## ** ** ** Child production of foils 3 year olds ** ** ** ##
 
-#load the library
-library(childesr)
-library(dplyr)
-library(ggplot2)
-library(tidyverse)
-library(tidyboot)
-library(magrittr)
-library(tidytext)
-library(plyr)
-library(ddply)
-library(scales)
-
-#setwd("C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\foils\\children")
-getwd()
 
 #importing the foil table
 foil_list <- read.csv(file = "~\\GitHub\\child-verb-matching-study\\Data\\foil_list.csv", header = TRUE)
@@ -981,12 +967,19 @@ length(combined_num_of_children_in_syms_unique$target_child_id) #74
 write.csv(combined_num_of_children_in_syms_unique, "~\\GitHub\\child-verb-matching-study\\Output\\symmetricals\\child\\combined\\combined_num_of_children_in_syms_unique.csv")
 
 #foils
+combined_num_of_children_in_foils_redux <-rbind(token_freq_per_child_four_foils_final, token_freq_per_child_three_foils_final)
+combined_num_of_children_in_foils_redux_unique <- as.data.frame(unique(combined_num_of_children_in_foils_redux$target_child_id))
+names(combined_num_of_children_in_foils_redux_unique)[names(combined_num_of_children_in_foils_redux_unique) == "unique(combined_num_of_children_in_foils_redux$target_child_id)"] <- "target_child_id"
+length(unique(combined_num_of_children_in_foils_redux_unique$target_child_id)) #126
+length(combined_num_of_children_in_foils_redux_unique$target_child_id) #126
+write.csv(combined_num_of_children_in_foils_redux_unique, "~\\GitHub\\child-verb-matching-study\\Output\\foils\\child\\combined\\combined_num_of_children_in_foils_redux_unique.csv")
 
-#token_freq_per_child_three_foils_final_targetid <- as.data.frame(unique(token_freq_per_child_three_foils_final$target_child_id))
-#names(token_freq_per_child_three_foils_final_targetid)[names(token_freq_per_child_three_foils_final_targetid) == "unique(token_freq_per_child_three_foils_final$target_child_id)"] <- "target_child_id"
+# --
+token_freq_per_child_three_foils_final_targetid <- as.data.frame(unique(token_freq_per_child_three_foils_final$target_child_id))
+names(token_freq_per_child_three_foils_final_targetid)[names(token_freq_per_child_three_foils_final_targetid) == "unique(token_freq_per_child_three_foils_final$target_child_id)"] <- "target_child_id"
 
-#token_freq_per_child_four_foils_final_targetid <- as.data.frame(unique(token_freq_per_child_four_foils_final$target_child_id))
-#names(token_freq_per_child_four_foils_final_targetid)[names(token_freq_per_child_four_foils_final_targetid) == "unique(token_freq_per_child_four_foils_final$target_child_id)"] <- "target_child_id"
+token_freq_per_child_four_foils_final_targetid <- as.data.frame(unique(token_freq_per_child_four_foils_final$target_child_id))
+names(token_freq_per_child_four_foils_final_targetid)[names(token_freq_per_child_four_foils_final_targetid) == "unique(token_freq_per_child_four_foils_final$target_child_id)"] <- "target_child_id"
 
 # why do i do this ? just copy the sym method.
 combined_num_of_children_in_foils <- rbind(token_freq_per_child_three_foils_final_targetid, token_freq_per_child_four_foils_final_targetid)
@@ -994,16 +987,18 @@ combined_num_of_children_in_foils_unique <- as.data.frame(unique(combined_num_of
 names(combined_num_of_children_in_foils_unique)[names(combined_num_of_children_in_foils_unique) == "unique(combined_num_of_children_in_foils$target_child_id)"] <- "target_child_id"
 length(unique(combined_num_of_children_in_foils_unique$target_child_id)) #126
 
+#checking for duplicates. 
 foils_toke_freq_chi <- as.data.frame(token_freq_per_child_four_foils_final_targetid$target_child_id %in% token_freq_per_child_three_foils_final_targetid$target_child_id)
 
 how_many_symsids_in_foils <- as.data.frame(combined_num_of_children_in_foils_unique$target_child_id %in% combined_num_of_children_in_syms_unique$target_child_id)
 length(how_many_symsids_in_foils$`combined_num_of_children_in_foils_unique$target_child_id %in% combined_num_of_children_in_syms_unique$target_child_id` == 'TRUE')
 sum(how_many_symsids_in_foils$`combined_num_of_children_in_foils_unique$target_child_id %in% combined_num_of_children_in_syms_unique$target_child_id`, na.rm = TRUE)
-#71 shared ids - so 71 children contribute to both sym and foil tokens.
+#74 shared ids - so 74 children contribute to both sym and foil tokens.
 
 #how many unique foil ids? Not in the shared count
 how_many_unique_foil_ids <- as.data.frame(combined_num_of_children_in_foils_unique$target_child_id %in% combined_num_of_children_in_syms_unique$target_child_id)
 sum(how_many_unique_foil_ids$`combined_num_of_children_in_foils_unique$target_child_id %in% combined_num_of_children_in_syms_unique$target_child_id`, na.rm = TRUE)
+#74
 
 #combined unique target child ids
 combined_sym_foil_targetids <- rbind(combined_num_of_children_in_foils_unique, combined_num_of_children_in_syms_unique)
@@ -1012,22 +1007,26 @@ length(unique(combined_sym_foil_targetids$target_child_id))#126
 #how many unique sym ids? not in the shared count
 how_many_unique_syms_ids <- as.data.frame(combined_num_of_children_in_syms_unique$target_child_id %in% combined_sym_foil_targetids$target_child_id)
 sum(how_many_unique_foil_ids$`combined_num_of_children_in_syms_unique$target_child_id %in% combined_sym_foil_targetids$target_child_id`, na.rm = TRUE)
+#0 no unique sym ids that are not in the foils.
 
 #unique_foil_ids
 unique_foil_ids <- combined_sym_foil_targetids %>% filter(!target_child_id %in% combined_num_of_children_in_syms_unique$target_child_id)
 length(unique(unique_foil_ids$target_child_id))
+#52 unique foil ids
 
 #unique_sym_ids
 unique_sym_ids <- combined_sym_foil_targetids %>% filter(!target_child_id %in% combined_num_of_children_in_foils_unique$target_child_id)
 length(unique(unique_sym_ids$target_child_id))
+#0 unique sym ids
 
 length(unique(combined_num_of_children_in_syms_unique$target_child_id))
+#74 unique sym ids
 
 #combined_exclusion
 #combined foil exclusion info
 combined_exclusion_foils <- rbind(exclusion_three_info_foils_final, exclusion_four_info_foils_final)
 length(combined_exclusion_foils$target_child_id) #2844
-
+length(unique(combined_exclusion_foils$target_child_id)) #natches up with "combined_num_of_children_in_foils"
 # *** Analysis for combined or other information ** 
 
 #combined foil exclusion info
@@ -1036,37 +1035,42 @@ length(combined_exclusion_foils$target_child_id) #2844
 
 #combined exclusion foil and sym
 combined_exclusion_foil_sym <- rbind(combined_exclusion_foils,combined_exclusion_syms)
-length(unique(combined_exclusion_foil_sym$target_child_id))
-length(combined_exclusion_foil_sym$target_child_id) #3420
-write.csv(combined_exclusion_foil_sym, "C:\\Users\\abima\\Documents\\GitHub\\childesr-corpus-analysis\\symmetricals\\children\\combined_exclusion_foil_sym.csv")
+length(unique(combined_exclusion_foil_sym$target_child_id)) #126 unique children in both sym and foil
+length(combined_exclusion_foil_sym$target_child_id) #3494
+write.csv(combined_exclusion_foil_sym, "~\\GitHub\\child-verb-matching-study\\Output\\combined_foil_sym\\combined_exclusion_foil_sym.csv")
 
 #corpra counts
 combined_corpora_tokens_sym_and_foil <- combined_exclusion_foil_sym %>% dplyr::group_by(corpus_name) %>%
   dplyr::summarize(tokens = length(corpus_name))
-sum(combined_corpora_tokens_sym_and_foil$tokens)
+write.csv(combined_corpora_tokens_sym_and_foil, "~\\GitHub\\child-verb-matching-study\\Output\\combined_foil_sym\\combined_corpora_tokens_sym_and_foil.csv")
+sum(combined_corpora_tokens_sym_and_foil$tokens)# 3494
 
 #how many syms in foils
 syms_in_foils <- combined_exclusion_syms %>% filter(target_child_id %in% combined_exclusion_foils$target_child_id)
-length(syms_in_foils$target_child_id) #576
-length(unique(syms_in_foils$target_child_id)) #71 syms and foil contribution
+length(syms_in_foils$target_child_id) #650, which is all of the symmetricals.
+length(unique(syms_in_foils$target_child_id)) #74 syms and foil contribution
+
+#check whether the foil target child id rbind matches the foil exclusion length.
+
 
 foils_not_in_syms <- combined_exclusion_foils %>% filter(!target_child_id %in% combined_exclusion_syms$target_child_id)
-length(unique(foils_not_in_syms$target_child_id)) #55 pure foil kids
+length(unique(foils_not_in_syms$target_child_id)) #52 pure foil kids
 
 length(unique(exclusion_four_info_foils_final$target_child_id)) #53
 length(unique(exclusion_three_info_foils_final$target_child_id)) #73
-length(unique(exclusion_three_info_final$target_child_id)) #31 syms
-length(unique(exclusion_four_info_final$target_child_id)) #40 syms
+
+length(unique(exclusion_three_info_sym_final$target_child_id)) #33 syms
+length(unique(exclusion_four_info_sym_final$target_child_id)) #41 syms
 
 #how many three-year-olds?
-threes_only <- rbind(exclusion_three_info_final,exclusion_three_info_foils_final)
+threes_only <- rbind(exclusion_three_info_sym_final,exclusion_three_info_foils_final)
 length(unique(threes_only$target_child_id)) #73
 
 threes_in_combined_exclusions <- combined_exclusion_foil_sym %>% filter(between(target_child_age,36,48))
 length(unique(threes_in_combined_exclusions$target_child_id)) #73
 
 #how many four-year-olds?
-fours_only <- rbind(exclusion_four_info_final, exclusion_four_info_foils_final)
+fours_only <- rbind(exclusion_four_info_sym_final, exclusion_four_info_foils_final)
 length(unique(fours_only$target_child_id)) #53
 
 fours_in_combined_exclusions <- combined_exclusion_foil_sym %>% filter(between(target_child_age,48,60))
@@ -1084,4 +1088,4 @@ length(unique(exclusions_females$target_child_id)) #48
 combined_exclusion_foil_sym_unique_ids <- mean(combined_exclusion_foil_sym$target_child_age)
 
 #how many unique corpra?
-length(unique(combined_exclusion_foil_sym$corpus_name))
+length(unique(combined_exclusion_foil_sym$corpus_name)) #25
