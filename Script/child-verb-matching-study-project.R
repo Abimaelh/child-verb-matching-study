@@ -514,10 +514,11 @@ library(scales)
 getwd()#
 
 #importing the foil table
-foil_list <- read.csv(file = "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Data/foil_list.csv", header = TRUE)
+foil_list <- read.csv(file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Data","foil_list.csv"), header = TRUE)
+#foil_list <- read.csv(file = "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Data/foil_list.csv", header = TRUE)
 foil_list$unique_stems <- NULL
 #how many unique foil stems do we have in total?
-length(unique(foil_list$stem)) #40
+length(unique(foil_list$stem)) #61
 
 #childesdb search of foils
 three_year_olds_tokens_foil_df <- get_tokens(
@@ -528,7 +529,7 @@ three_year_olds_tokens_foil_df <- get_tokens(
 )
 
 #checking how many children came up in the search.
-length(unique(three_year_olds_tokens_foil_df$target_child_id)) #was 82, now 91 with the addition of foils for share and crash.
+length(unique(three_year_olds_tokens_foil_df$target_child_id)) #was 91 with the addition of foils for share and crash, now 101 with a search for echo,rap,ring,ding,accept,understand,know.
 
 #trim the database by selecting the columns we are interested in
 three_foils_df_trimmed <- select(three_year_olds_tokens_foil_df, 'target_child_id', 'corpus_name', 'target_child_age',
@@ -541,36 +542,36 @@ three_foils_df_trimmed
 
 #filter the df by part (past participle) and v (verb)
 three_foils_filtered_pos_df <- three_foils_df_trimmed %>% filter(pos == 'v' | pos == 'part')
-length(three_foils_filtered_pos_df$target_child_id) #was 2037, now 5338
+length(three_foils_filtered_pos_df$target_child_id) #now 5,338, was 12,365
 #now we want to know what words don't appear in the db
 three_foils_not_in_db <- foil_list %>% filter(!form %in% three_foils_filtered_pos_df$form)
 #saving
-write.csv(three_foils_not_in_db, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/three/updated-count/three_foils_not_in_db_v5.csv")
+write.csv(three_foils_not_in_db, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","three","updated-count","three_foils_not_in_db_v6.csv"))
 
-length(three_foils_filtered_pos_df$target_child_id) #was 2781, now 5338
-length(unique(three_foils_filtered_pos_df$target_child_id)) #was 77, now 86
+length(three_foils_filtered_pos_df$target_child_id) #was 5,338 now 12,365
+length(unique(three_foils_filtered_pos_df$target_child_id)) #was 86 now 96
 
 #making df of unique ids in three year olds
 ids_for_threes_foils <- as.data.frame(unique(three_foils_filtered_pos_df$target_child_id))
 names(ids_for_threes_foils)[names(ids_for_threes_foils) == "unique(three_foils_filtered_pos_df$target_child_id)"] <- "target_child_id"
-length(unique(ids_for_threes_foils$target_child_id)) #86 unique ids
+length(unique(ids_for_threes_foils$target_child_id)) #96 unique ids
 
 # generate 119 (because our sym_list has 119 rows) instances of an ID (n # of participants x f # of forms )
 # we are trying to create a dataframe that has 8,925 rows (75 * 119)
-length(foil_list$stem) #160
-three_many_ids_foils <- ids_for_threes_foils %>% slice(rep(1:n(), each = 214))
-length(three_many_ids_foils$target_child_id) #13760
+length(foil_list$stem) #244
+three_many_ids_foils <- ids_for_threes_foils %>% slice(rep(1:n(), each = 244))
+length(three_many_ids_foils$target_child_id) #23,424
 
 #generate 73 instances of each symmetrical - because we want the ids and sym words to have the same # of rows before
 #we merge them together.
-length(unique(three_foils_filtered_pos_df$target_child_id)) #86
-n = 94
+length(unique(three_foils_filtered_pos_df$target_child_id)) #96
+n = 96
 threes_many_foils <- do.call("rbind", replicate(n, foil_list, simplify = FALSE))
-length(threes_many_foils$form) #13760
+length(threes_many_foils$form) #23,424
 
 # Merge many IDS with many syms
 three_foils_and_id <- cbind(threes_many_foils, target_child_id = three_many_ids_foils$target_child_id)
-length(three_foils_and_id$target_child_id) #13760
+length(three_foils_and_id$target_child_id) #23,424
 
 #the number of participants differ from the original code "child-production-of-foils"
 #because we searched for nouns and adjectives in that code. Here we focus on verbs. 
@@ -580,7 +581,7 @@ length(three_foils_and_id$target_child_id) #13760
 three_foils_filtered_pos_df$target_child_age <-  replace(three_foils_filtered_pos_df$target_child_age,
                                                          three_foils_filtered_pos_df$target_child_age >= 36.00 &
                                                            three_foils_filtered_pos_df$target_child_age <= 47.99, 3)
-length(three_foils_filtered_pos_df$target_child_id) #5338
+length(three_foils_filtered_pos_df$target_child_id) #12,365
 #you can use three_foils_filtered_pos_df to extract sentence frames for three year olds Using utterance_id
 #saving
 #save.image("~/GitHub/childesr-corpus-analysis/symmetricals/children/child-production-of-symmetricals-shortened-environment.RData")
@@ -590,32 +591,33 @@ length(three_foils_filtered_pos_df$target_child_id) #5338
 detach(package:plyr)
 three_counts_foils <- three_foils_filtered_pos_df %>% group_by(form, target_child_id, target_child_age, target_child_sex,corpus_name,utterance_id) %>%
   summarize(count = sum(unique(length(form)))) #2010
-length(three_counts_foils$form)#was 2735, now 5241
+length(three_counts_foils$form)#was 5241, now 12,116
 #checking we still have the same amount of children.
-length(unique(three_counts_foils$target_child_id)) #86
+length(unique(three_counts_foils$target_child_id)) #96
 
 #this could be useful later on.
 three_counts_pasted_targetid_uttid_stem_foils <- as.data.frame(paste(three_foils_filtered_pos_df$target_child_id, three_foils_filtered_pos_df$stem, three_foils_filtered_pos_df$utterance_id))
 names(three_counts_pasted_targetid_uttid_stem_foils)[names(three_counts_pasted_targetid_uttid_stem_foils) == "paste(three_foils_filtered_pos_df$target_child_id, three_foils_filtered_pos_df$stem, three_foils_filtered_pos_df$utterance_id)"] <- "wordstem"
 three_counts_pasted_targetid_uttid_stem_separate_foils <- three_counts_pasted_targetid_uttid_stem_foils %>% separate(wordstem, c("target_child_id", "stem", "utterance_id"))
-length(unique(three_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id)) #73
+length(unique(three_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id)) #96
 three_counts_pasted_targetid_uttid_stem_separate_foils <- three_counts_pasted_targetid_uttid_stem_separate_foils %>% filter(stem == 'cover' | stem == 'insert' | stem == 'tie' | stem == 'drop' | stem == 'knot' | stem == 'punch' | stem == 'kick' | stem == 'attack' | stem == 'tickle'
                                                                                                                             | stem == 'pet' | stem == 'stroke' | stem == 'pull' | stem == 'lick' | stem == 'bite' | stem == 'invite' | stem == 'celebrate' | 
                                                                                                                               stem == 'adopt' | stem == 'choose' | stem == 'check' | stem == 'teach' | stem == 'greet' | stem == 'push' | stem == 'tap' | 
                                                                                                                               stem == 'hold' | stem == 'bump' | stem == 'sell' | stem == 'buy' | stem== 'stick' | stem== 'glue' | stem== 'hang'|stem=='give'|stem=='take'|stem=='keep'|stem=='bring'|stem=='hog'|stem=='grab'|stem=='hit'|stem=='slam'|stem=='smash'|stem=='knock'|
-                                                                                                                              stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate')
+                                                                                                                              stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate'|stem=='echo'|stem=='rap'|stem=='ring'|stem=='ding'|
+                                                                                                                              stem=='accept'|stem=='understand'|stem=='know')
 #|stem=='take'|stem=='keep'|stem=='bring'|stem=='hog'|stem=='grab'|stem=='hit'|stem=='slam'|stem=='smash'|stem=='knock'
 #stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate'
 #change the stems to foil stems!
-length(unique(three_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id)) #86
-length(three_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #5338 this number might change depending on whether or not there are errors in the filter process!
+length(unique(three_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id)) #96
+length(three_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #12,362 this number might change depending on whether or not there are errors in the filter process!
 
 #arranging by target_id helps when merging columns.
 three_counts_foils <- three_counts_foils %>% arrange(target_child_id)
-length(unique(three_counts_foils$target_child_id)) #86
+length(unique(three_counts_foils$target_child_id)) #96
 
-length(three_counts_foils$form) #5241  because this only includes counts for words that were produced by the child.Can we use this to plot data for people that have more than one count?
-length(three_foils_and_id$form) #13760
+length(three_counts_foils$form) #12,116  because this only includes counts for words that were produced by the child.Can we use this to plot data for people that have more than one count?
+length(three_foils_and_id$form) #23,424
 
 three_full_foils <- merge(three_counts_foils, three_foils_and_id, all = TRUE)
 three_full_foils <- three_full_foils %>% arrange(target_child_id)
@@ -624,14 +626,14 @@ three_full_foils$target_child_sex <-NULL
 three_full_foils$corpus_name <- NULL
 three_full_foils$utterance_id <- NULL
 
-length(unique(three_full_foils$form)) #160
-length(unique(three_full_foils$target_child_id)) #86
-length(three_full_foils$form) #17907
+length(unique(three_full_foils$form)) #244
+length(unique(three_full_foils$target_child_id)) #96
+length(three_full_foils$form) #33,969
 
 #now go in and change NAs for age to 3 and NAs for count to 0
 three_full_foils$count[is.na(three_full_foils$count)] <- 0
 three_full_foils$target_child_age[is.na(three_full_foils$target_child_age)] <- 3
-sum(three_full_foils$count) #5338 matches with three_foils_filtered_pos_df? - this df doesn't count tokens, so we count the rows which are equal to one token.
+sum(three_full_foils$count) #12,367 matches with three_foils_filtered_pos_df? - this df doesn't count tokens, so we count the rows which are equal to one token.
 unique(three_full_foils$stem)
 
 #we would select our top 12 foils here, but im going to include all of them.
@@ -640,16 +642,17 @@ filter_by_stem_foils <- three_full_foils %>% filter(stem == 'cover' | stem == 'i
                                                       stem == 'adopt' | stem == 'choose' | stem == 'check' | stem == 'teach' | stem == 'greet' | stem == 'push' | stem == 'tap' | 
                                                       stem == 'hold' | stem == 'bump' | stem == 'sell' | stem == 'buy' | stem== 'stick' | stem== 'glue' | stem== 'hang'|stem=='give'|stem=='take'|stem=='keep'| 
                                                       stem =='bring'|stem=='hog'|stem=='grab'|stem=='hit'|stem=='slam'|stem=='smash'|stem=='knock'|
-                                                      stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate')
-length(filter_by_stem_foils$target_child_id) #17907 rows
-length(unique(filter_by_stem_foils$target_child_id)) #86
+                                                      stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate'|
+                                                      stem=='echo'|stem=='rap'|stem=='ring'|stem=='ding'|stem=='accept'|stem=='understand'|stem=='know')
+length(filter_by_stem_foils$target_child_id) #33,966 rows
+length(unique(filter_by_stem_foils$target_child_id)) #96
 unique(filter_by_stem_foils$stem)
 
 #*** IDK why 'bring' is being filtered out here. Extra space in your foil list ***#
 
 #collapsed by stem + the number of counts for each stem
 three_child_sum_foils <- aggregate(filter_by_stem_foils$count, by=list(filter_by_stem_foils$stem), sum)
-write.csv(three_child_sum_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/three/updated-count/three_child_sum_foils_v5.csv")
+write.csv(three_child_sum_foils, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","three","updated-count","three_child_sum_foils_v6.csv"))
 
 #every stem and their count for each child.
 three_child_all_stems_per_child_foils <- filter_by_stem_foils %>% group_by(target_child_id,stem) %>%
@@ -664,16 +667,18 @@ three_child_all_stems_per_child_foils <- filter_by_stem_foils %>% group_by(targe
 #table(checking) #this works but how to scale it up?
 
 three_child_all_stems_per_child_no_zeros_foils <- three_child_all_stems_per_child_foils
-length(unique(three_child_all_stems_per_child_no_zeros_foils$target_child_id))#86
+length(unique(three_child_all_stems_per_child_no_zeros_foils$target_child_id))#96
 three_child_all_stems_per_child_no_zeros_foils <- three_child_all_stems_per_child_no_zeros_foils %>% filter(tokens != 0)
-length(unique(three_child_all_stems_per_child_no_zeros_foils$target_child_id))#86
-length(three_child_all_stems_per_child_no_zeros_foils$target_child_id) #684
+length(unique(three_child_all_stems_per_child_no_zeros_foils$target_child_id))#96
+length(three_child_all_stems_per_child_no_zeros_foils$target_child_id) #1035
 #eliminating the zeros worked!
 verb_pairs_for_three_child_sheet_foils <- three_child_all_stems_per_child_no_zeros_foils %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = length(unique(target_child_id)))
-length(unique(three_child_all_stems_per_child_no_zeros_foils$target_child_id)) #86
+length(unique(three_child_all_stems_per_child_no_zeros_foils$target_child_id)) #96
 #save now or later
-write.csv(verb_pairs_for_three_child_sheet_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/three/updated-count/verb_pairs_for_three_child_sheet_foils_v5.csv")
+write.csv(verb_pairs_for_three_child_sheet_foils, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","three","updated-count","verb_pairs_for_three_child_sheet_foils_v6.csv"))
+
+#stopped here for v6 of verb pair for three foils. 10/13/21
 
 #Extracting corpus information so we can exclude atypical children
 exclusion_three_info_foils <- three_foils_df_trimmed %>% filter(utterance_id %in% three_counts_pasted_targetid_uttid_stem_separate_foils$utterance_id) 
@@ -747,13 +752,13 @@ four_foils_df_trimmed
 
 #filter the df by part (participle) and v (verb)
 four_foils_filtered_pos_df <- four_foils_df_trimmed %>% filter(pos == 'v' | pos == 'part')
-length(four_foils_filtered_pos_df$target_child_id) #6088
+length(four_foils_filtered_pos_df$target_child_id) #was 6088, now 14,189
 #now we want to know what words don't appear in the db
 four_foils_not_in_db <- foil_list %>% filter(!form %in% four_foils_filtered_pos_df$form)
-write.csv(four_foils_not_in_db, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/four/updated-count/four_foils_not_in_db_v5.csv")
+write.csv(four_foils_not_in_db, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","four","updated-count","four_foils_not_in_db_v6.csv"))
 
-length(four_foils_filtered_pos_df$target_child_id) #6088
-length(unique(four_foils_filtered_pos_df$target_child_id)) #72
+length(four_foils_filtered_pos_df$target_child_id) #was 6088, now 14,189
+length(unique(four_foils_filtered_pos_df$target_child_id)) #was 72 now 73
 
 #making df of unique ids in four year olds
 ids_for_fours_foils <- as.data.frame(unique(four_foils_filtered_pos_df$target_child_id))
@@ -773,18 +778,18 @@ length(unique(ids_for_fours_foils$target_child_id)) #72 unique ids with duplicat
 
 #generate 105 instances of an ID
 length(foil_list$form)
-four_many_ids_foils <- ids_for_fours_foils %>% slice(rep(1:n(), each = 214))
-length(four_many_ids_foils$target_child_id) #was 8092 (68 * 119), now (160 * 72) 11520
+four_many_ids_foils <- ids_for_fours_foils %>% slice(rep(1:n(), each = 244))
+length(four_many_ids_foils$target_child_id) #was (160 * 72) 11520, now 17,812
 
 #generate 53 (for each unique id) instances of sym_words # i think this (the extra rows) gets filtered out later. 
 length(unique(ids_for_fours_foils$target_child_id)) #67 unique ids with duplicate children from the 3 year old foil db
 n = 73
 four_many_foils <- do.call("rbind", replicate(n, foil_list, simplify = FALSE))
-length(four_many_foils$form) #was 8680, now 11520
+length(four_many_foils$form) #was 11520, now 17812
 
 # Merge many IDS with many syms
 four_foils_and_id <- cbind(four_many_foils, target_child_id = four_many_ids_foils$target_child_id)
-length(four_foils_and_id$target_child_id) #11520
+length(four_foils_and_id$target_child_id) #17812
 
 #replacing age with 4
 
@@ -792,7 +797,7 @@ four_foils_filtered_pos_df$target_child_age <-  replace(four_foils_filtered_pos_
                                                         four_foils_filtered_pos_df$target_child_age >= 48.00 &
                                                           four_foils_filtered_pos_df$target_child_age < 59.99, 4)
 
-length(four_foils_filtered_pos_df$target_child_id) #6088
+length(four_foils_filtered_pos_df$target_child_id) #was 6088 now 14189
 #you can use four_foils_filtered_pos_df to extract sentence frames for three year olds Using utterance_id
 #No! Remove the repeats first!
 
@@ -808,22 +813,23 @@ detach(package:plyr)
 four_counts_foils <- four_foils_filtered_pos_df %>% group_by(form, target_child_id, target_child_age, target_child_sex,corpus_name,utterance_id) %>%
   summarize(count = sum(unique(length(form)))) #2175 rows
 #checking we still have the same amount of children.
-length(unique(four_counts_foils$target_child_id)) #72
+length(unique(four_counts_foils$target_child_id)) #73
 
 #this could be useful later on.
 four_counts_pasted_targetid_uttid_stem_foils <- as.data.frame(paste(four_foils_filtered_pos_df$target_child_id, four_foils_filtered_pos_df$stem, four_foils_filtered_pos_df$utterance_id))
 names(four_counts_pasted_targetid_uttid_stem_foils)[names(four_counts_pasted_targetid_uttid_stem_foils) == "paste(four_foils_filtered_pos_df$target_child_id, four_foils_filtered_pos_df$stem, four_foils_filtered_pos_df$utterance_id)"] <- "wordstem"
 four_counts_pasted_targetid_uttid_stem_separate_foils <- four_counts_pasted_targetid_uttid_stem_foils %>% separate(wordstem, c("target_child_id", "stem", "utterance_id"))
-length(four_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #2225
+length(four_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #2225, now 14189
 #four_counts_pasted_targetid_uttid_stem_separate <- four_counts_pasted_targetid_uttid_stem_separate %>% filter(utterance_id != 704599)
 #four_counts_pasted_targetid_uttid_stem_separate <- four_counts_pasted_targetid_uttid_stem_separate %>% filter(target_child_id != 2591)
 four_counts_pasted_targetid_uttid_stem_separate_foils <- four_counts_pasted_targetid_uttid_stem_separate_foils %>% filter(stem=='cover'|stem=='insert'|stem=='tie'|stem=='drop'|stem=='knot'|stem=='punch'|stem=='kick'|stem=='attack'|stem=='tickle'|stem=='pet'|stem=='stroke'|stem=='pull'|stem=='lick'|stem=='bite'|stem=='invite'|stem=='celebrate'|stem=='adopt'|stem=='choose'|stem=='check'|stem=='teach'|stem=='greet'|stem=='push'|stem=='tap'|stem=='hold'|stem=='bump'|stem=='sell'|stem=='buy'|stem=='bit' | stem== 'stick' | stem== 'glue' | stem== 'hang'|stem=='give'|stem=='take'|stem=='keep'|stem=='bring'|stem=='hog'|stem=='grab'|stem=='hit'|stem=='slam'|stem=='smash'|stem=='knock'
-                                                                                                                          |stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate')
+                                                                                                                          |stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate'|
+                                                                                                                            stem=='echo'|stem=='rap'|stem=='ring'|stem=='ding'|stem=='accept'|stem=='understand'|stem=='know')
 
 length(four_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id)
 four_counts_pasted_targetid_uttid_stem_separate_foils[four_counts_pasted_targetid_uttid_stem_separate_foils$stem=='bit', "stem"] <- "bite"
 #fixing the 'bit' stem issue
-length(four_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #6088
+length(four_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #14189
 
 #USE THIS TO GET THE FRAMES! AND FIND DUPLICATES!
 #length(unique(four_counts_pasted_targetid_uttid_stem_separate2$target_child_id))
@@ -835,35 +841,35 @@ length(four_counts_pasted_targetid_uttid_stem_separate_foils$target_child_id) #6
 
 #arranging by target_id helps when merging columns.
 four_counts_foils <- four_counts_foils %>% arrange(target_child_id)
-length(unique(four_counts_foils$target_child_id)) #72
+length(unique(four_counts_foils$target_child_id)) #73
 
-length(four_counts_foils$form) #5907
-length(four_foils_and_id$form)#11520
+length(four_counts_foils$form) #5907, now 13721
+length(four_foils_and_id$form)#11520, now 17812
 
 #its okay for the rows/columns here to not be equal
 four_full_foils <- merge(four_counts_foils, four_foils_and_id, all = TRUE) #Original 
-length(four_full_foils$target_child_id) #15927
+length(four_full_foils$target_child_id) #29476
 
-length(unique(four_full_foils$form)) #160
+length(unique(four_full_foils$form)) #243
 #deals with the random "thought" that was inserted.
 four_full_foils <- four_full_foils %>% filter(form %in% foil_list$form)
-length(unique(four_full_foils$form)) #160
-length(unique(four_full_foils$stem)) #40
-length(unique(four_full_foils$target_child_id)) #72
+length(unique(four_full_foils$form)) #243
+length(unique(four_full_foils$stem)) #61
+length(unique(four_full_foils$target_child_id)) #73
 
 four_full_foils$target_child_sex <-NULL
 four_full_foils$corpus_name <- NULL
 four_full_foils$utterance_id <- NULL
 
-length(unique(four_full_foils$form)) #160
-length(unique(four_full_foils$target_child_id)) #72
-length(four_full_foils$form) #15927
+length(unique(four_full_foils$form)) #243
+length(unique(four_full_foils$target_child_id)) #73
+length(four_full_foils$form) #29476
 
 #now go in and change nas for age to 4 and nas for count to 0
 
 four_full_foils$count[is.na(four_full_foils$count)] <- 0
 four_full_foils$target_child_age[is.na(four_full_foils$target_child_age)] <- 4
-sum(four_full_foils$count) #6088. Matches four_year_olds_tokendf?, ** 
+sum(four_full_foils$count) #14189. Matches four_year_olds_tokendf?, ** 
 #taking out think here #1129
 #four_foils_filtered_pos_df <- four_foils_filtered_pos_df %>% filter(stem != 'think')
 
@@ -872,26 +878,25 @@ filter_by_stem_four_foils <- four_full_foils %>% filter(stem == 'cover' | stem =
                                                           stem == 'pet' | stem == 'stroke' | stem == 'pull' | stem == 'lick' | stem == 'bite' | stem == 'invite' | stem == 'celebrate' | 
                                                           stem == 'adopt' | stem == 'choose' | stem == 'check' | stem == 'teach' | stem == 'greet' | stem == 'push' | stem == 'tap' | 
                                                           stem == 'hold' | stem == 'bump' | stem == 'sell' | stem == 'buy' | stem == 'bit' | stem== 'stick' | stem== 'glue' | stem== 'hang'|stem=='give'|stem=='take'|stem=='keep'|stem=='bring'|stem=='hog'|stem=='grab'|stem=='hit'|stem=='slam'|stem=='smash'|stem=='knock'|
-                                                          stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate')
-length(filter_by_stem_four_foils$target_child_id) #15927
-length(unique(filter_by_stem_four_foils$target_child_id)) #72
+                                                          stem=='jam'|stem=='pinch'|stem=='flip'|stem=='turn'|stem=='spin'|stem=='poke'|stem=='press'|stem=='put'|stem=='place'|stem=='set'|stem=='lay'|stem=='wrap'|stem=='discover'|stem=='discriminate'|
+                                                          stem=='echo'|stem=='rap'|stem=='ring'|stem=='ding'|stem=='accept'|stem=='understand'|stem=='know')
+length(filter_by_stem_four_foils$target_child_id) #15927, now 29476
+length(unique(filter_by_stem_four_foils$target_child_id)) #72, now 73
 # need to add another constraint. 
 # the count must be greater than 0 to be in filter_by_stem_four
 
 #collapsed by stem + the number of counts for each stem
 four_child_sum_foils <- aggregate(filter_by_stem_four_foils$count, by=list(filter_by_stem_four_foils$stem), sum)
-write.csv(four_child_sum_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/four/updated-count/four_child_sum_foils_v5.csv")
-
+write.csv(four_child_sum_foils, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","four","updated-count","four_child_sum_foils_v6.csv"))
 
 #every stem and their count for each child.
 detach(package:plyr)
 four_child_all_stems_per_child_foils <- filter_by_stem_four_foils %>% group_by(target_child_id,stem) %>%
   summarize(tokens = sum(count))
-write.csv(four_child_all_stems_per_child_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/four/updated-count/four_child_all_stems_per_child_foils_v5.csv")
-
+write.csv(four_child_all_stems_per_child_foils, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","four","updated-count","four_child_all_stems_per_child_foils_v6.csv"))
 
 #this could be useful, once we fix the one extra token for 2291 bite
-sum(four_child_all_stems_per_child_foils$tokens) #6088
+sum(four_child_all_stems_per_child_foils$tokens) #14189
 #test2 <- filter_by_stem %>% group_by(stem) %>%
 #summarize(num_chi = )
 #write.csv(four_child_all_stems_per_child_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/four/updated-count/four_child_all_stems_per_child_foils_v2.csv")
@@ -901,7 +906,7 @@ sum(four_child_all_stems_per_child_foils$tokens) #6088
 #table(checking) #this works but how to scale it up?
 
 four_child_all_stems_per_child_no_zeros_foils <- four_child_all_stems_per_child_foils
-length(four_child_all_stems_per_child_foils$stem) #2880
+length(four_child_all_stems_per_child_foils$stem) #2880, now 4453
 #this is key!
 four_child_all_stems_per_child_no_zeros_foils <- four_child_all_stems_per_child_no_zeros_foils %>% filter(tokens != 0)
 four_child_all_stems_per_child_no_zeros_foils <- four_child_all_stems_per_child_no_zeros_foils %>% arrange(target_child_id)
@@ -911,9 +916,12 @@ sum(four_child_all_stems_per_child_no_zeros_foils$tokens) #6088
 #eliminating the zeros worked!
 verb_pairs_for_four_child_sheet_foils <- four_child_all_stems_per_child_no_zeros_foils %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = length(unique(target_child_id)))
-length(unique(four_child_all_stems_per_child_no_zeros_foils$target_child_id)) #72
-sum(four_child_all_stems_per_child_no_zeros_foils$tokens) #6088
-write.csv(verb_pairs_for_four_child_sheet_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/four/updated-count/verb_pairs_for_four_child_sheet_foils_v5.csv")
+length(unique(four_child_all_stems_per_child_no_zeros_foils$target_child_id)) #73
+sum(four_child_all_stems_per_child_no_zeros_foils$tokens) #14189
+
+write.csv(verb_pairs_for_four_child_sheet_foils, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","four","updated-count","verb_pairs_for_four_child_sheet_foils_v6.csv"))
+
+#stopped here for verb pairs four foils. 10/13/21
 
 #Extracting corpus information so we can exclude atypical children
 #this is why we get the wrong number of rows. separate_foils is wrong.
@@ -1011,8 +1019,9 @@ combined_three_four_verb_pair_tokens_foils <- rbind(verb_pairs_for_four_child_sh
 
 combined_three_four_verb_pair_tokens_summed_foils <- combined_three_four_verb_pair_tokens_foils %>% dplyr::group_by(stem) %>%
   dplyr::summarize(tokens = sum(tokens), num_chi = sum(num_chi))
-sum(combined_three_four_verb_pair_tokens_summed_foils$tokens) #19013
-write.csv(combined_three_four_verb_pair_tokens_summed_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/combined/updated-count/combined_three_four_verb_pair_tokens_summed_foils_v5.csv")
+sum(combined_three_four_verb_pair_tokens_summed_foils$tokens) #26553
+write.csv(combined_three_four_verb_pair_tokens_summed_foils, file.path("~","Symmetry","Studies","Child-verb-matching","Child-verb-matching-study","Output","foils","child","combined","updated-count","combined_three_four_verb_pair_tokens_summed_foils_v6.csv"))
+#write.csv(combined_three_four_verb_pair_tokens_summed_foils, "/Users/abimaelh/Documents/GitHub/child-verb-matching-study/Output/foils/child/combined/updated-count/combined_three_four_verb_pair_tokens_summed_foils_v5.csv")
 
 sum(four_child_all_stems_per_child_no_zeros_foils$tokens) #1915
 length(exclusion_four_info_foils_final$target_child_id) #1915
